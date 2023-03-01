@@ -88,3 +88,13 @@ In run.py edit lines 25 to 34 with your specific deployment parameters.
 
 The emulator can be run with `python3 run.py N` where N represents the number of heartbeats you want to send out with your emulator before relinquishing the grant and deregistering.
 
+## Raspberry Pi LED
+
+When the code is executed on a Raspberry Pi, it will attempt to control the LED connected to GPIO 16, which is typically used for SD Card access. Depending on the function being executed, the LED will flash in different patterns:
+* once the Raspberry Pi is registered as a CBSD, the LED will change to a solid light
+* during the spectrum inquiry process, the LED will flash quickly (0.1s on followed by 0.1s off)
+* during the grant request process, the LED will flash quickly for 3 times, followed by a longer pause (0.5 s)
+* the heartbeat status is shown by the LED blinking in a heart rhythm, two flashes followed by a longer pause
+* during the relinquishment phase the LED flashes slowly (0.5s on followed by 0.5s off)
+* once the RPi has been deregistered as a CBSD the LED is turned off
+* a special, distinctive LED cycle is used to signal an error by flashing ERROR in binary
