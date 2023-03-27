@@ -7,7 +7,7 @@ This code emulates the communication occurring between a Spectrum Access System 
 
 Communication between a SAS and a CBSD consists of the following 6 components. Note that each request needs to include the required certificates, which are not included in this repository. Each response to a request either contains a response code 0 if the request was a success or a different response code with a message describing why the request failed.
 
-# Registration
+### Registration
 
 Registering a CBSD requires:
 * FCC ID
@@ -22,7 +22,7 @@ A registration requests returns:
 * A response code
 * A CBSD ID
 
-# Spectrum Inquiry
+### Spectrum Inquiry
 
 A spectrum inquiry request consists of:
 * The previously received CBSD ID
@@ -33,7 +33,7 @@ The spectrum inquiry response consists of:
 * A response code
 * A frequency range of available channels
 
-# Grant Request
+### Grant Request
 
 A grant request consists of:
 * CBSD ID
@@ -48,7 +48,7 @@ A grant request responds with:
 * Heart Beat Interval
 * Channel Type
 
-# Heartbeat Request
+### Heartbeat Request
 
 Depending on the Grant Expiration and Heart Beat Interval provided by the response to the grant request, a Heartbeat Request needs to be sent within certain intervals.
 
@@ -67,11 +67,11 @@ The response to a successful Heartbeat Request contains:
 
 If the heartbeat request is unsuccessful it can be due to an incumbent moving into the channel, resulting in a status such as 'TERMINATED GRANT', requiring the CBSD to terminate operation associated with this Grant within 60 seconds after the value of the transmitExpireTime parameter expires.
 
-# Relinquishment Request
+### Relinquishment Request
 
 A Relinquishment Request needs to be sent after the CBSD stops transmitting. The request only contains the CBSD ID and the Grant ID and responds either with a response code 0 plus CBSD ID and Grant ID or an error with message.
 
-# Deregistration Request
+### Deregistration Request
 
 Finally, deregister the CBSD by sending it CBSD ID to the deregistration url. Expect a response code 0 for success.
 
