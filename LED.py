@@ -4,6 +4,7 @@
 
 import os
 import time
+import RPi.GPIO as GPIO
 
 class LED(object):
     def __init__(self):
@@ -15,6 +16,9 @@ class LED(object):
     def terminate(self):
         self._running = False
         os.system('echo 0 | sudo dd status=none of=/sys/class/leds/led0/brightness')
+
+        # Terminating LED2 as well
+        GPIO.cleanup()
 
     def register(self):
         # Solid LED to show the CBSD has been registered
@@ -48,7 +52,13 @@ class LED(object):
         
     def heartbeat(self):
         # starts LED heartbeat pattern
-        os.system('echo heartbeat | sudo dd status=none of=/sys/class/leds/led0/trigger')
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(18, GPIO.OUT)
+        pwm = GPIO.PWM(18, 10) # Pin number (NOT physical pin, physical pin is 12, Pin ID is 18), Frequency is 1 kHz
+        pwm.start(50) #Duty cycle
+        # https://learn.sparkfun.com/tutorials/raspberry-gpio/python-rpigpio-api
+        #Modified such that LED2 is now the heartbeat and the system LED is used for other cases
+        # os.system('echo heartbeat | sudo dd status=none of=/sys/class/leds/led0/trigger')
 
     
     def relinquish(self):
