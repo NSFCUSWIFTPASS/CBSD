@@ -8,20 +8,31 @@ import RPi.GPIO as GPIO
 
 class LED(object):
     def __init__(self):
-        if 'raspberrypi' not in os.uname():
-            raise ValueError("Not an RPi, no LEDs present")
+        #if 'raspberrypi' not in os.uname():
+        #    raise ValueError("Not an RPi, no LEDs present")
         #self._event = threading.Event()
         self._running = True
 
     def terminate(self):
         self._running = False
         os.system('echo 0 | sudo dd status=none of=/sys/class/leds/led0/brightness')
-
-        # Terminating LED2 as well
+        # Terminating LEDs
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.setup(16, GPIO.OUT)
+        GPIO.output(18, False)
+        GPIO.output(16, False)
         GPIO.cleanup()
 
     def register(self):
         # Solid LED to show the CBSD has been registered
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.output(18, True)
+        GPIO.setup(16, GPIO.OUT)
+        GPIO.output(16, True)
         os.system('echo 1 | sudo dd status=none of=/sys/class/leds/led0/brightness')
         
     def inquiry(self):
@@ -49,28 +60,44 @@ class LED(object):
             time.sleep(0.1)
             os.system('echo 0 | sudo dd status=none of=/sys/class/leds/led0/brightness') 
             time.sleep(0.5)
-        
-    def heartbeat(self):
-        # starts LED heartbeat pattern
-        GPIO.setmode(GPIO.BCM)
-        GPIO.setup(18, GPIO.OUT)
-        pwm = GPIO.PWM(18, 10) # Pin number (NOT physical pin, physical pin is 12, Pin ID is 18), Frequency is 1 kHz
-        pwm.start(50) #Duty cycle
-        # https://learn.sparkfun.com/tutorials/raspberry-gpio/python-rpigpio-api
-        #Modified such that LED2 is now the heartbeat and the system LED is used for other cases
-        # os.system('echo heartbeat | sudo dd status=none of=/sys/class/leds/led0/trigger')
 
+    def heartbeat(self):
+        self._running = True
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.output(18, False)
+        time.sleep(1)
+        GPIO.output(18, True)
+        GPIO.setup(16, GPIO.OUT)
+        GPIO.output(16, True)
+        time.sleep(2)
+        GPIO.output(16, False)
+        time.sleep(1)
+        GPIO.output(16, True)
     
     def relinquish(self):
         self._running = True
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.setup(18, GPIO.OUT)
+        GPIO.output(18, False)
+        time.sleep(1)
+        GPIO.setup(16, GPIO.OUT)
+        GPIO.output(16, False)
+        time.sleep(1)
+        GPIO.output(16, True)
         while self._running:
             os.system('echo 1 | sudo dd status=none of=/sys/class/leds/led0/brightness') 
             time.sleep(0.5)
             os.system('echo 0 | sudo dd status=none of=/sys/class/leds/led0/brightness') 
             time.sleep(0.5)
-
         
     def deregister(self):
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setwarnings(False)
+        GPIO.output(18, False)
+        GPIO.output(16, False)
         os.system('echo 0 | sudo dd status=none of=/sys/class/leds/led0/brightness') 
     
     def error(self):
